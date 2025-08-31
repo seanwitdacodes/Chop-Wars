@@ -1,26 +1,26 @@
 # 🍴 Chop Wars
 
-**Chop Wars** is a Unity game set in Ghana where your mission is simple:  
+**Chop Wars** is a Unity game where your mission is simple:  
 👉🏾 **Eat smart. Stay alive. Win the war against unhealthy foods.**
 
-The player must dodge unhealthy foods (which reduce health points) while catching healthy foods (which restore health and help you thrive).  
+The player must dodge unhealthy foods (which reduce health points) while catching healthy foods (which restore health and keep you moving).  
 
 ---
 
 ## 🎮 Gameplay
 
 - **Player Control**: Move left and right to guide your character.  
-- **Avoid Unhealthy Foods**: Junk food will slow you down, make you bigger, and remove health points.  
-- **Collect Healthy Foods**: Fresh Ghanaian fruits and local healthy foods give you extra health points and speed.  
-- **Survive & Score**: Your score increases the longer you survive, but beware—too many unhealthy bites and it’s game over.  
+- **Avoid Unhealthy Foods**: Junk food makes you slower, bigger, and removes health points.  
+- **Collect Healthy Foods**: Fruits, vegetables, and other nutritious foods from around the world give you extra health points and speed.  
+- **Survive & Score**: Your score increases the longer you survive. Once your health hits zero—it’s game over.  
 
 ---
 
 ## 🌍 Theme
 
-- Based in **Ghana**, inspired by local food culture.  
-- Promotes **healthy eating habits** in a fun, engaging way.  
-- Characters, foods, and art style reflect Ghanaian culture with a playful, cartoony twist.  
+- Showcases **foods from around the world** 🌎  
+- Highlights the importance of healthy eating in a fun, fast-paced way  
+- Bright, cartoony art style that appeals to all ages  
 
 ---
 
@@ -42,5 +42,3 @@ The player must dodge unhealthy foods (which reduce health points) while catchin
 1. Clone this repository:
    ```bash
    git clone https://github.com/yourusername/chop-wars.git
-
-
