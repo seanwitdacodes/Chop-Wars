@@ -3,26 +3,29 @@
     <Files>
       <File FileName="Assets/Scripts/PlayerMovement.cs" Line="123" Column="1" />
       <File FileName="Assets/Scripts/EnemySpawner.cs" Line="19" Column="1" />
-      <File FileName="Assets/Scripts/Triangle SelfDestruct.cs" Line="1" Column="1" />
-      <File FileName="Assets/Scripts/PlayerGrow.cs" Line="1" Column="1" />
-      <File FileName="Assets/Scripts/ScoreManager.cs" Line="1" Column="1" />
+      <File FileName="Assets/Scripts/Triangle SelfDestruct.cs" />
+      <File FileName="Assets/Scripts/PlayerGrow.cs" />
+      <File FileName="Assets/Scripts/ScoreManager.cs" />
       <File FileName="Assets/Scripts/HealthBar.cs" />
       <File FileName="Assets/Scripts/LoseScreen.cs" />
       <File FileName="Assets/Scripts/PauseScreen.cs" />
-      <File FileName="Assets/Scripts/MenuLoader.cs" Line="13" Column="28" />
-      <File FileName="Assets/Scripts/SettingsScript.cs" Line="37" Column="1" />
+      <File FileName="Assets/Scripts/SettingsScript.cs" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
         <State name="__root__">
-          <Node name="Chop Wars" expanded="True" />
+          <Node name="Chop Wars" expanded="True">
+            <Node name="Assets" expanded="True" selected="True">
+              <Node name="Scripts" expanded="True" />
+            </Node>
+          </Node>
         </State>
       </Pad>
     </Pads>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.PinnedWatches />
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.ItemProperties.Assembly-CSharp PreferredExecutionTarget="a1170164-7e56-4833-b7ee-839c742a76fb" />
+  <MonoDevelop.Ide.ItemProperties.Assembly-CSharp PreferredExecutionTarget="987f1537-ddeb-4376-8620-5e92a7ccb20d" />
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
     <BreakpointStore />
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
