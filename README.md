@@ -38,7 +38,4 @@ The player must dodge unhealthy foods (which reduce health points) while catchin
 - Install [Unity Hub](https://unity.com/download)  
 - Unity Editor version: *2021.3 LTS or higher recommended*  
 
-### Installation
-1. Clone this repository:
-   ```bash
-   git clone https://github.com/yourusername/chop-wars.git
+
