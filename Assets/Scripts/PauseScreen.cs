@@ -13,6 +13,10 @@ public class PauseManager : MonoBehaviour
         if (pauseMenu != null)
             pauseMenu.SetActive(false);
     }
+    public void LoadMenu()
+    {
+        SceneManager.LoadScene("Menu2");
+    }
 
     public void TogglePause()
     {

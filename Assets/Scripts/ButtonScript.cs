@@ -19,5 +19,10 @@ public class MenuLoader : MonoBehaviour
 
     {
         SceneManager.LoadScene("Settings");
-    }    
+    }
+
+    public void LoadLevels()
+    {
+        SceneManager.LoadScene("Levels");
+    }
 }
