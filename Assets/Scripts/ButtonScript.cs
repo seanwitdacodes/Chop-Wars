@@ -25,4 +25,9 @@ public class MenuLoader : MonoBehaviour
     {
         SceneManager.LoadScene("Levels");
     }
+
+    public void LoadGame()
+    {
+        SceneManager.LoadScene("MainGame");
+    }
 }
