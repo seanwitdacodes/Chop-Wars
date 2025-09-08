@@ -8,7 +8,7 @@
       <File FileName="Assets/Scripts/ScoreManager.cs" />
       <File FileName="Assets/Scripts/HealthBar.cs" />
       <File FileName="Assets/Scripts/LoseScreen.cs" />
-      <File FileName="Assets/Scripts/PauseScreen.cs" Line="27" Column="28" />
+      <File FileName="Assets/Scripts/PauseScreen.cs" />
       <File FileName="Assets/Scripts/SettingsScript.cs" />
       <File FileName="Assets/Scripts/ButtonScript.cs" Line="31" Column="41" />
     </Files>
@@ -16,10 +16,8 @@
       <Pad Id="ProjectPad">
         <State name="__root__">
           <Node name="Chop Wars" expanded="True">
-            <Node name="Assets" expanded="True">
-              <Node name="Scripts" expanded="True">
-                <Node name="ButtonScript.cs" selected="True" />
-              </Node>
+            <Node name="Assets" expanded="True" selected="True">
+              <Node name="Scripts" expanded="True" />
             </Node>
           </Node>
         </State>
@@ -28,7 +26,7 @@
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.PinnedWatches />
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.ItemProperties.Assembly-CSharp PreferredExecutionTarget="0ad05a13-ba18-4dfe-943b-420a30271631" />
+  <MonoDevelop.Ide.ItemProperties.Assembly-CSharp PreferredExecutionTarget="9c26e7c3-2eca-434e-b08a-de517fb9e421" />
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
     <BreakpointStore />
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
