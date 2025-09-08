@@ -10,7 +10,7 @@
       <File FileName="Assets/Scripts/LoseScreen.cs" />
       <File FileName="Assets/Scripts/PauseScreen.cs" />
       <File FileName="Assets/Scripts/SettingsScript.cs" />
-      <File FileName="Assets/Scripts/ButtonScript.cs" Line="31" Column="41" />
+      <File FileName="Assets/Scripts/ButtonScript.cs" Line="36" Column="42" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
