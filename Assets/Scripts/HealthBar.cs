@@ -28,7 +28,6 @@ public class HealthBar : MonoBehaviour
 
     void Awake()
     {
-        // Auto-grab hearts (sorted left → right or right → left)
         if (autoGrabHearts)
         {
             hearts = GetComponentsInChildren<Image>(true);
@@ -40,7 +39,6 @@ public class HealthBar : MonoBehaviour
 
     void Start()
     {
-        // ✅ Always reset to full health on scene start
         currentHealth = maxHealth;
         UpdateHearts();
 
@@ -127,7 +125,6 @@ public class HealthBar : MonoBehaviour
             healthCanvas.SetActive(false);
     }
 
-    // ✅ Call this from Pause/Restart to guarantee reset
     public void ResetHealth()
     {
         currentHealth = maxHealth;

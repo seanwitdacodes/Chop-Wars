@@ -31,8 +31,4 @@ public class MenuLoader : MonoBehaviour
         SceneManager.LoadScene("MainGame");
     }
 
-    public void LoadGuide2()
-    {
-        SceneManager.LoadScene("Guide2");
-    }
 }
