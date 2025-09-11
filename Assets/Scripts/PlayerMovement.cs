@@ -45,9 +45,6 @@ public class PlayerMovement : MonoBehaviour
     {
         if (isGameOver) return;
 
-        // ❌ Removed size-based Game Over
-        // Player no longer dies from shrinking/minSize
-
         float moveX = Input.GetAxisRaw("Horizontal");
 
         if (moveSpeed > 0f)
@@ -62,6 +59,7 @@ public class PlayerMovement : MonoBehaviour
     {
         if (isGameOver) return;
 
+        // 🟥 Enemy hit
         if (other.CompareTag("Enemy"))
         {
             moveSpeed = Mathf.Max(minSpeed, moveSpeed - speedChange);
@@ -76,11 +74,13 @@ public class PlayerMovement : MonoBehaviour
             {
                 GameOver();
             }
+
+            Destroy(other.gameObject); // remove enemy on impact
         }
 
-        if (other.CompareTag("Healthy"))
+        // 🟩 Healthy food
+        else if (other.CompareTag("Healthy"))
         {
-            // ✅ Only boost speed, no Game Over, no health changes
             if (moveSpeed < maxSpeed)
             {
                 moveSpeed = Mathf.Min(maxSpeed, moveSpeed + speedChange);
@@ -90,6 +90,28 @@ public class PlayerMovement : MonoBehaviour
             {
                 Debug.Log("Healthy fruit collected! Already at max speed.");
             }
+
+            Destroy(other.gameObject); // remove healthy pickup
+        }
+
+        // ❤️ Heart pickup
+        else if (other.CompareTag("Heart"))
+        {
+            if (healthBar != null)
+            {
+                if (healthBar.currentHealth < healthBar.maxHealth)
+                {
+                    healthBar.currentHealth++;
+                    healthBar.UpdateHearts();
+                    Debug.Log("❤️ Heart collected! Health = " + healthBar.currentHealth);
+                }
+                else
+                {
+                    Debug.Log("❤️ Heart collected but already at max health!");
+                }
+            }
+
+            Destroy(other.gameObject); // remove heart pickup
         }
     }
 

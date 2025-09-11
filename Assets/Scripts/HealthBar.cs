@@ -71,14 +71,20 @@ public class HealthBar : MonoBehaviour
 
     public void Heal(int amount)
     {
+        int oldHealth = currentHealth;
+
         currentHealth += amount;
         if (currentHealth > maxHealth) currentHealth = maxHealth;
 
         UpdateHearts();
 
-        int index = drainLeftToRight ? (currentHealth - 1) : (hearts.Length - currentHealth);
-        if (index >= 0 && index < hearts.Length)
-            StartCoroutine(FlashHeart(hearts[index], Color.green));
+        // Flash the newly restored heart(s) green
+        for (int i = oldHealth; i < currentHealth; i++)
+        {
+            int index = drainLeftToRight ? i : (hearts.Length - 1 - i);
+            if (index >= 0 && index < hearts.Length)
+                StartCoroutine(FlashHeart(hearts[index], Color.green));
+        }
     }
 
     public void UpdateHearts()

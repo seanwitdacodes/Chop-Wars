@@ -5160,7 +5160,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c3597ec68adea4b18ab81e0efb496a81, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  healAmount: 1
+  playerTag: Player
 --- !u!1001 &8724135572250297061
 PrefabInstance:
   m_ObjectHideFlags: 0
