@@ -10,6 +10,7 @@ public class LoseScreenManager : MonoBehaviour
     public TextMeshProUGUI highScoreText;  // Drag HighScore TMP here
 
     private ScoreManager scoreManager;
+   
 
     void Start()
     {
@@ -47,4 +48,9 @@ public class LoseScreenManager : MonoBehaviour
         Time.timeScale = 1f; // unpause game
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
+
+    
+    
+
 }
+

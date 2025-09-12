@@ -1,7 +1,7 @@
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody2D), typeof(Collider2D))]
-public class PlayerSizeManager : MonoBehaviour
+public class PlayerGrow : MonoBehaviour
 {
     [Header("Size Settings")]
     public float growthAmount = 0.2f;    // Amount player grows

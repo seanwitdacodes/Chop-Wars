@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class MenuLoader : MonoBehaviour
+public class ButtonScript : MonoBehaviour
 {
     // Load Menu2 scene
     public void LoadMenu2()

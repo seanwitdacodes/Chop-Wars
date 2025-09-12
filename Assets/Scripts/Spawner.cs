@@ -1,7 +1,7 @@
 using System.Collections;
 using UnityEngine;
 
-public class FoodSpawner : MonoBehaviour
+public class Spawner : MonoBehaviour
 {
     [Header("Enemies")]
     public GameObject[] unhealthyEnemies;   // Common enemies
@@ -9,7 +9,7 @@ public class FoodSpawner : MonoBehaviour
 
     [Header("Special Pickups")]
     public GameObject[] heartPickups;       // Heart prefabs
-    [Range(0f, 1f)] public float heartChance = 0.02f; // 2% chance by default
+    [Range(0f, 1f)] public float heartChance = 0.005f; // 0.5% chance by default
 
     [Header("Spawn Area")]
     public Vector2 spawnAreaSize = new Vector2(5f, 5f);
@@ -57,23 +57,23 @@ public class FoodSpawner : MonoBehaviour
             (healthyEnemies == null || healthyEnemies.Length == 0) &&
             (heartPickups == null || heartPickups.Length == 0))
         {
-            Debug.LogWarning("FoodSpawner: No prefabs assigned.");
+            Debug.LogWarning("Spawner: No prefabs assigned.");
             return;
         }
 
         GameObject prefabToSpawn = null;
 
-        // 🎯 First: roll for heart
+        // First: roll for heart
         if (heartPickups != null && heartPickups.Length > 0 && Random.value < heartChance)
         {
             prefabToSpawn = heartPickups[Random.Range(0, heartPickups.Length)];
         }
-        // 🎯 Second: roll for healthy food
+        // Second: roll for healthy food
         else if (healthyEnemies != null && healthyEnemies.Length > 0 && Random.value < healthyChance)
         {
             prefabToSpawn = healthyEnemies[Random.Range(0, healthyEnemies.Length)];
         }
-        // 🎯 Otherwise: unhealthy food
+        // Otherwise: unhealthy food
         else
         {
             GameObject[] pool = (unhealthyEnemies != null && unhealthyEnemies.Length > 0)
@@ -90,12 +90,5 @@ public class FoodSpawner : MonoBehaviour
         );
 
         Instantiate(prefabToSpawn, spawnPos, Quaternion.identity);
-
-        if (heartPickups != null && heartPickups.Length > 0 && Random.value < heartChance)
-        {
-            prefabToSpawn = heartPickups[Random.Range(0, heartPickups.Length)];
-            Debug.Log("🍎 Heart Spawn Triggered!"); // debug
-        }
-
     }
 }

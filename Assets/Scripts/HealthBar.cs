@@ -15,7 +15,7 @@ public class HealthBar : MonoBehaviour
     public Sprite emptyHeart;
 
     [Header("References")]
-    public GameObject healthCanvas; // drag HealthCanvas here
+    public GameObject healthCanvas; 
 
     [Header("Options")]
     public bool autoGrabHearts = true;
@@ -78,7 +78,7 @@ public class HealthBar : MonoBehaviour
 
         UpdateHearts();
 
-        // Flash the newly restored heart(s) green
+       
         for (int i = oldHealth; i < currentHealth; i++)
         {
             int index = drainLeftToRight ? i : (hearts.Length - 1 - i);

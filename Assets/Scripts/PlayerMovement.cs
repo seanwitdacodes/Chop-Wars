@@ -59,7 +59,7 @@ public class PlayerMovement : MonoBehaviour
     {
         if (isGameOver) return;
 
-        // 🟥 Enemy hit
+        //  Enemy hit
         if (other.CompareTag("Enemy"))
         {
             moveSpeed = Mathf.Max(minSpeed, moveSpeed - speedChange);
@@ -78,7 +78,7 @@ public class PlayerMovement : MonoBehaviour
             Destroy(other.gameObject); // remove enemy on impact
         }
 
-        // 🟩 Healthy food
+        //  Healthy food
         else if (other.CompareTag("Healthy"))
         {
             if (moveSpeed < maxSpeed)
@@ -94,7 +94,7 @@ public class PlayerMovement : MonoBehaviour
             Destroy(other.gameObject); // remove healthy pickup
         }
 
-        // ❤️ Heart pickup
+        //  Heart pickup
         else if (other.CompareTag("Heart"))
         {
             if (healthBar != null)
@@ -135,7 +135,7 @@ public class PlayerMovement : MonoBehaviour
         }
 
         // Disable spawners
-        FoodSpawner[] spawners = FindObjectsOfType<FoodSpawner>();
+        Spawner[] spawners = FindObjectsOfType<Spawner>();
         foreach (var spawner in spawners)
         {
             spawner.enabled = false;
