@@ -113,6 +113,18 @@ public class PlayerMovement : MonoBehaviour
 
             Destroy(other.gameObject); // remove heart pickup
         }
+
+        //  🪙 Coin pickup
+        else if (other.CompareTag("Coin"))
+        {
+            if (scoreManager != null)
+            {
+                scoreManager.AddScore(50); // ✅ add 50 points
+                Debug.Log("🪙 Coin collected! +50 points, total score = " + scoreManager.GetScore());
+            }
+
+            Destroy(other.gameObject); // remove coin pickup
+        }
     }
 
     private void GameOver()

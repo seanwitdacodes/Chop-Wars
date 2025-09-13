@@ -7,16 +7,20 @@ public class Spawner : MonoBehaviour
     public GameObject[] unhealthyEnemies;   // Common enemies
     public GameObject[] healthyEnemies;     // Rare enemies
 
-    [Header("Special Pickups")]
+    [Header("Heart Pickups")]
     public GameObject[] heartPickups;       // Heart prefabs
     [Range(0f, 1f)] public float heartChance = 0.005f; // 0.5% chance by default
 
-    [Header("Spawn Area")]
+    [Header("Coin Pickups")] //Coin prefabs
+    public GameObject[] coinPickups;
+    [Range(0f, 1f)] public float coinChance = 0.005f; //0.5% chance by default
+
+    [Header("Spawn Area")] // Spawn Area
     public Vector2 spawnAreaSize = new Vector2(5f, 5f);
 
     [Header("Spawn Rate (auto-ramps)")]
     public float startInterval = 2f;
-    public float halveEverySeconds = 30f;
+    public float halveEverySeconds = 20f;
 
     [Header("Spawn Mix")]
     [Range(0f, 1f)] public float healthyChance = 0.05f; // 5% chance
@@ -55,7 +59,8 @@ public class Spawner : MonoBehaviour
     {
         if ((unhealthyEnemies == null || unhealthyEnemies.Length == 0) &&
             (healthyEnemies == null || healthyEnemies.Length == 0) &&
-            (heartPickups == null || heartPickups.Length == 0))
+            (heartPickups == null || heartPickups.Length == 0) &&
+            (coinPickups == null || coinPickups.Length == 0))
         {
             Debug.LogWarning("Spawner: No prefabs assigned.");
             return;
@@ -68,7 +73,12 @@ public class Spawner : MonoBehaviour
         {
             prefabToSpawn = heartPickups[Random.Range(0, heartPickups.Length)];
         }
-        // Second: roll for healthy food
+        // Second: roll for coin
+        else if (coinPickups != null && coinPickups.Length > 0 && Random.value < coinChance)
+        {
+            prefabToSpawn = coinPickups[Random.Range(0, coinPickups.Length)];
+        }
+        // Third: roll for healthy food
         else if (healthyEnemies != null && healthyEnemies.Length > 0 && Random.value < healthyChance)
         {
             prefabToSpawn = healthyEnemies[Random.Range(0, healthyEnemies.Length)];

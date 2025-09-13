@@ -3,8 +3,9 @@ using TMPro;
 
 public class ScoreManager : MonoBehaviour
 {
+    [Header("UI")]
     public GameObject scoreboardCanvas;   // drag your scoreboard canvas here
-    public TextMeshProUGUI scoreText;
+    public TextMeshProUGUI scoreText;     // drag your TMP text object here
 
     private int score = 0;
     private int highscore = 0;
@@ -19,28 +20,29 @@ public class ScoreManager : MonoBehaviour
 
     void Update()
     {
+        // ⏱️ Time-based scoring
         timer += Time.deltaTime;
 
-        if (timer >= 1f)
+        if (timer >= 1f) // every 1 second
         {
             score++;
+            timer -= 1f; // safer than reset (handles lag better)
 
             if (score > highscore)
             {
                 highscore = score;
-                PlayerPrefs.SetInt("Highscore", highscore); // save
+                PlayerPrefs.SetInt("Highscore", highscore);
                 PlayerPrefs.Save();
             }
 
             UpdateUI();
-            timer = 0f;
         }
     }
 
     private void UpdateUI()
     {
         if (scoreText != null)
-            scoreText.text = score.ToString();
+            scoreText.text = score.ToString(); // ✅ just the number
     }
 
     public int GetScore()
@@ -57,5 +59,20 @@ public class ScoreManager : MonoBehaviour
     {
         if (scoreboardCanvas != null)
             scoreboardCanvas.SetActive(false);
+    }
+
+    // 🪙 AddScore method for coins/hearts/etc.
+    public void AddScore(int amount)
+    {
+        score += amount;
+
+        if (score > highscore)
+        {
+            highscore = score;
+            PlayerPrefs.SetInt("Highscore", highscore);
+            PlayerPrefs.Save();
+        }
+
+        UpdateUI();
     }
 }

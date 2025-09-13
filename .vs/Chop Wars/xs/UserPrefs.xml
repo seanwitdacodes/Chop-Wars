@@ -1,26 +1,24 @@
 ﻿<Properties StartupConfiguration="{B7AD2169-BD45-3A2C-A007-CE2F4EF3C9EC}|">
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Scripts/Spawner.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Scripts/ButtonScript.cs">
     <Files>
       <File FileName="Assets/Scripts/PlayerMovement.cs" Line="145" Column="1" />
-      <File FileName="Assets/Scripts/Triangle SelfDestruct.cs" Line="17" Column="1" />
+      <File FileName="Assets/Scripts/Triangle SelfDestruct.cs" />
       <File FileName="Assets/Scripts/PlayerGrow.cs" />
-      <File FileName="Assets/Scripts/ScoreManager.cs" Line="61" Column="2" />
+      <File FileName="Assets/Scripts/ScoreManager.cs" />
       <File FileName="Assets/Scripts/HealthBar.cs" />
       <File FileName="Assets/Scripts/LoseScreen.cs" />
-      <File FileName="Assets/Scripts/PauseScreen.cs" Line="1" Column="1" />
+      <File FileName="Assets/Scripts/PauseScreen.cs" />
       <File FileName="Assets/Scripts/SettingsScript.cs" />
-      <File FileName="Assets/Scripts/ButtonScript.cs" />
-      <File FileName="Assets/Scripts/Coin.cs" Line="1" Column="1" />
-      <File FileName="Assets/Scripts/Spawner.cs" Line="78" Column="36" />
+      <File FileName="Assets/Scripts/ButtonScript.cs" Line="9" Column="41" />
+      <File FileName="Assets/Scripts/Coin.cs" />
+      <File FileName="Assets/Scripts/Spawner.cs" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
         <State name="__root__">
           <Node name="Chop Wars" expanded="True">
-            <Node name="Assets" expanded="True">
-              <Node name="Scripts" expanded="True">
-                <Node name="Spawner.cs" selected="True" />
-              </Node>
+            <Node name="Assets" expanded="True" selected="True">
+              <Node name="Scripts" expanded="True" />
             </Node>
           </Node>
         </State>
@@ -29,7 +27,7 @@
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.PinnedWatches />
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.ItemProperties.Assembly-CSharp PreferredExecutionTarget="97c5a8b5-3ff2-42f7-9f73-ab4ba55a935f" />
+  <MonoDevelop.Ide.ItemProperties.Assembly-CSharp PreferredExecutionTarget="abc3a76e-cb76-4308-9cb3-7f70383da847" />
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
     <BreakpointStore />
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
