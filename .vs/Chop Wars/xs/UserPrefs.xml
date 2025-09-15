@@ -1,7 +1,7 @@
 ﻿<Properties StartupConfiguration="{B7AD2169-BD45-3A2C-A007-CE2F4EF3C9EC}|">
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Scripts/ButtonScript.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Scripts/PlayerMovement.cs">
     <Files>
-      <File FileName="Assets/Scripts/PlayerMovement.cs" Line="145" Column="1" />
+      <File FileName="Assets/Scripts/PlayerMovement.cs" Line="148" Column="1" />
       <File FileName="Assets/Scripts/Triangle SelfDestruct.cs" />
       <File FileName="Assets/Scripts/PlayerGrow.cs" />
       <File FileName="Assets/Scripts/ScoreManager.cs" />
@@ -9,7 +9,7 @@
       <File FileName="Assets/Scripts/LoseScreen.cs" />
       <File FileName="Assets/Scripts/PauseScreen.cs" />
       <File FileName="Assets/Scripts/SettingsScript.cs" />
-      <File FileName="Assets/Scripts/ButtonScript.cs" Line="9" Column="41" />
+      <File FileName="Assets/Scripts/ButtonScript.cs" />
       <File FileName="Assets/Scripts/Coin.cs" />
       <File FileName="Assets/Scripts/Spawner.cs" />
     </Files>
@@ -27,7 +27,7 @@
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.PinnedWatches />
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.ItemProperties.Assembly-CSharp PreferredExecutionTarget="abc3a76e-cb76-4308-9cb3-7f70383da847" />
+  <MonoDevelop.Ide.ItemProperties.Assembly-CSharp PreferredExecutionTarget="e12764f1-dba5-440c-9ac5-a1667ea832b0" />
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
     <BreakpointStore />
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
