@@ -2835,7 +2835,7 @@ MonoBehaviour:
   coinPickups:
   - {fileID: 6963025095289207306, guid: 9af73c1a19c96410aaac432d3ff3bb66, type: 3}
   coinChance: 0.005
-  spawnAreaSize: {x: 20, y: 5}
+  spawnAreaSize: {x: 25, y: 5}
   startInterval: 2
   halveEverySeconds: 30
   healthyChance: 0.05
