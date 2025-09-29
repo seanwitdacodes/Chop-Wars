@@ -1,0 +1,38 @@
+﻿<Properties StartupConfiguration="{99886D2D-74E2-BB53-919A-058DC9ED03F6}|">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Scripts/HealthBar.cs">
+    <Files>
+      <File FileName="Assets/Scripts/ButtonScript.cs" Line="1" Column="1" />
+      <File FileName="Assets/Scripts/Coin.cs" Line="1" Column="1" />
+      <File FileName="Assets/Scripts/HealthBar.cs" Line="3" Column="19" />
+      <File FileName="Assets/Scripts/LevelsScript.cs" Line="1" Column="1" />
+      <File FileName="Assets/Scripts/PauseScreen.cs" Line="1" Column="1" />
+      <File FileName="Assets/Scripts/LoseScreen.cs" Line="1" Column="1" />
+      <File FileName="Assets/Scripts/PlayerGrow.cs" Line="1" Column="1" />
+      <File FileName="Assets/Scripts/PlayerMovement.cs" Line="1" Column="1" />
+      <File FileName="Assets/Scripts/ScoreManager.cs" Line="1" Column="1" />
+      <File FileName="Assets/Scripts/SettingsScript.cs" Line="1" Column="1" />
+      <File FileName="Assets/Scripts/Spawner.cs" Line="1" Column="1" />
+      <File FileName="Assets/Scripts/Triangle SelfDestruct.cs" Line="1" Column="1" />
+    </Files>
+    <Pads>
+      <Pad Id="ProjectPad">
+        <State name="__root__">
+          <Node name="Chop-Wars" expanded="True">
+            <Node name="Assets" expanded="True">
+              <Node name="Scripts" expanded="True">
+                <Node name="HealthBar.cs" selected="True" />
+              </Node>
+            </Node>
+          </Node>
+        </State>
+      </Pad>
+    </Pads>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.ItemProperties.Assembly-CSharp PreferredExecutionTarget="d9a2a419-7875-4abc-aa05-923324c06d17" />
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MultiItemStartupConfigurations />
+</Properties>
