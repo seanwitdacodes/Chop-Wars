@@ -13,11 +13,11 @@ public class Coin : MonoBehaviour
 
             if (manager != null)
             {
-                manager.AddScore(coinValue); // 🪙 +50 points
+                manager.AddScore(coinValue); // +50 points
             }
             else
             {
-                Debug.LogError("⚠️ No ScoreManager found in the scene!");
+                Debug.LogError(" No ScoreManager found in the scene!");
             }
 
             Destroy(gameObject); // remove coin after pickup
