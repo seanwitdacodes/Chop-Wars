@@ -21,12 +21,12 @@ public class Spawner : MonoBehaviour
     public float screenPadding = 0.25f;
 
     [Header("Spawn Rate (auto-ramps)")]
-    public float startInterval = 2f;
-    public float halveEverySeconds = 20f;
-    public float minInterval = 0.25f;
+    public float startInterval = 2.5f;
+    public float halveEverySeconds = 90f;
+    public float minInterval = 0.85f;
 
     [Header("Spawn Mix")]
-    [Range(0f, 1f)] public float healthyChance = 0.05f;
+    [Range(0f, 1f)] public float healthyChance = 0.12f;
 
     private Coroutine loop;
     private Camera gameplayCamera;

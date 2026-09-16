@@ -285,14 +285,14 @@ public static class ChopWarsValidation
         Require(player.transform.localScale.x < enlargedSize, "Healthy food must shrink the player.");
         Require(bodyRenderer.bounds.size.x < enlargedBodyWidth, "The visible character body must get slimmer when shrinking.");
         Require(player.moveSpeed > reducedSpeed, "Healthy food must increase movement speed.");
-        Require(health.currentHealth == initialHealth, "Healthy food must restore one heart.");
-        Pass("Real healthy-food trigger heals and makes the character slimmer and faster");
+        Require(health.currentHealth == initialHealth - 1, "Healthy food must not restore health; heart pickups own healing.");
+        Pass("Real healthy-food trigger makes the character slimmer and faster without healing");
 
         yield return Collect("Chicken", player);
         yield return WaitSeconds(player.hitStopDuration + 0.1f);
 
         yield return Collect("Heart", player);
-        Require(health.currentHealth == initialHealth, "Heart pickup must heal one point.");
+        Require(health.currentHealth == initialHealth - 1, "Heart pickup must heal one point.");
         yield return Collect("Heart", player);
         Require(health.currentHealth == initialHealth, "Hearts must not exceed maximum health.");
         int beforeCoin = score.GetScore();

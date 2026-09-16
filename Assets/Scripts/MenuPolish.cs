@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.Linq;
 using TMPro;
 using UnityEngine;
@@ -13,7 +12,6 @@ using UnityEngine.UI;
 public sealed class MenuPolish : MonoBehaviour
 {
     private static Sprite roundedSprite;
-    private readonly List<MenuButtonMotion> motions = new List<MenuButtonMotion>();
     private TextMeshProUGUI soundStateText;
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
@@ -49,6 +47,8 @@ public sealed class MenuPolish : MonoBehaviour
             scaler.matchWidthOrHeight = 0.5f;
         }
 
+        ApplyJungleBackdrop(canvas);
+
         string scene = SceneManager.GetActiveScene().name;
         if (scene == "MainMenu")
         {
@@ -81,7 +81,7 @@ public sealed class MenuPolish : MonoBehaviour
         Button play = FindButton("PlayButton");
         if (play != null)
         {
-            SetButtonLayout(play, new Vector2(0f, -350f), new Vector2(760f, 220f), new Color(0.72f, 0.30f, 0.055f), "PLAY NOW", "START AN ENDLESS RUN");
+            StyleWoodButton(play, new Vector2(0f, -350f), new Vector2(760f, 190f), new Color(0.91f, 0.60f, 0.23f), "PLAY NOW", "START AN ENDLESS RUN");
         }
 
         AddHint(canvas, template, "BEGIN YOUR ENDLESS KITCHEN RUN", new Vector2(0f, -490f), 25f);
@@ -90,39 +90,68 @@ public sealed class MenuPolish : MonoBehaviour
     private void PolishMenu(Canvas canvas, TextMeshProUGUI template)
     {
         RectTransform root = (RectTransform)canvas.transform;
-        Image shade = CreatePanel(root, "Menu Shade", new Color(0.12f, 0.045f, 0.015f, 0.58f), new Vector2(0f, -10f), new Vector2(960f, 970f));
+        Image shade = CreatePanel(root, "Menu Shade", new Color(0.10f, 0.22f, 0.08f, 0.16f), new Vector2(0f, -10f), new Vector2(960f, 970f));
         shade.rectTransform.SetSiblingIndex(1);
 
         CreateHeading(root, template, "CHOOSE YOUR STATION", "Keep cooking, tune the kitchen, or learn the ropes");
 
-        SetButtonLayout(FindButton("Levels_Button"), new Vector2(0f, 205f), new Vector2(780f, 205f), new Color(0.72f, 0.30f, 0.055f), "LEVELS", "CHOOSE A KITCHEN");
-        SetButtonLayout(FindButton("SettingButton"), new Vector2(0f, -30f), new Vector2(780f, 205f), new Color(0.25f, 0.43f, 0.22f), "SETTINGS", "AUDIO & OPTIONS");
-        SetButtonLayout(FindButton("GuideButton"), new Vector2(0f, -265f), new Vector2(780f, 205f), new Color(0.20f, 0.36f, 0.52f), "GUIDE", "LEARN HOW TO PLAY");
+        CreateRopes(root, 205f, -265f, 335f);
+
+        Color wood = new Color(0.91f, 0.60f, 0.23f);
+        StyleWoodButton(FindButton("Levels_Button"), new Vector2(0f, 205f), new Vector2(780f, 190f), wood, "LEVELS", "CHOOSE A KITCHEN");
+        StyleWoodButton(FindButton("SettingButton"), new Vector2(0f, -30f), new Vector2(780f, 190f), wood, "SETTINGS", "AUDIO & OPTIONS");
+        StyleWoodButton(FindButton("GuideButton"), new Vector2(0f, -265f), new Vector2(780f, 190f), wood, "GUIDE", "LEARN HOW TO PLAY");
     }
 
     private void PolishSettings(Canvas canvas, TextMeshProUGUI template)
     {
         RectTransform root = (RectTransform)canvas.transform;
-        Image shade = CreatePanel(root, "Settings Shade", new Color(0.12f, 0.045f, 0.015f, 0.55f), new Vector2(0f, -20f), new Vector2(980f, 820f));
+        Image shade = CreatePanel(root, "Settings Shade", new Color(0.10f, 0.22f, 0.08f, 0.16f), new Vector2(0f, -20f), new Vector2(980f, 820f));
         shade.rectTransform.SetSiblingIndex(1);
         TextMeshProUGUI hint = CreateText(template, root, "Settings Hint", new Vector2(0f, 230f), new Vector2(900f, 48f), 24f);
         hint.text = "SET THE MOOD BEFORE THE NEXT RUN";
         hint.color = new Color(1f, 0.94f, 0.81f);
 
-        SetButtonLayout(FindButton("SoundButton"), new Vector2(0f, -20f), new Vector2(760f, 225f), new Color(0.25f, 0.43f, 0.22f), "SOUND ON", "CLICK TO TOGGLE");
+        StyleWoodButton(FindButton("SoundButton"), new Vector2(0f, -20f), new Vector2(760f, 195f), new Color(0.91f, 0.60f, 0.23f), "SOUND ON", "CLICK TO TOGGLE");
         soundStateText = GameObject.Find("SoundButton")?.transform.Find("Polished Label")?.GetComponent<TextMeshProUGUI>();
-        SetButtonLayout(FindButton("BackButton"), new Vector2(0f, -320f), new Vector2(510f, 155f), new Color(0.52f, 0.20f, 0.055f), "BACK", "RETURN TO MENU");
+        StyleWoodButton(FindButton("BackButton"), new Vector2(0f, -320f), new Vector2(510f, 145f), new Color(0.91f, 0.60f, 0.23f), "BACK", "RETURN TO MENU");
     }
 
     private void PolishGuide(Canvas canvas, TextMeshProUGUI template)
     {
         RectTransform root = (RectTransform)canvas.transform;
-        TextMeshProUGUI title = CreateText(template, root, "Guide Title", new Vector2(0f, 430f), new Vector2(1000f, 75f), 48f);
-        title.text = "HOW TO SURVIVE THE KITCHEN";
-        TextMeshProUGUI hint = CreateText(template, root, "Guide Hint", new Vector2(0f, -330f), new Vector2(1400f, 48f), 23f);
-        hint.text = "MOVE FAST  •  CATCH GOOD FOOD  •  DODGE THE ROTTEN STUFF";
-        hint.color = new Color(1f, 0.86f, 0.52f);
-        SetButtonLayout(FindButton("BackButton"), new Vector2(0f, -445f), new Vector2(470f, 135f), new Color(0.52f, 0.20f, 0.055f), "BACK", "RETURN TO MENU");
+        foreach (TextMeshProUGUI oldText in FindObjectsByType<TextMeshProUGUI>(FindObjectsInactive.Include))
+        {
+            if (oldText.text.Contains("Reach 0250") || oldText.text.Contains("Move with Arrow"))
+            {
+                oldText.gameObject.SetActive(false);
+            }
+        }
+        Image board = CreatePanel(root, "Guide Wood Board", new Color(0.92f, 0.60f, 0.22f, 0.97f), new Vector2(0f, 40f), new Vector2(1300f, 690f));
+        Shadow boardShadow = board.gameObject.AddComponent<Shadow>();
+        boardShadow.effectColor = new Color(0.15f, 0.06f, 0.015f, 0.72f);
+        boardShadow.effectDistance = new Vector2(0f, -15f);
+        Outline boardOutline = board.gameObject.AddComponent<Outline>();
+        boardOutline.effectColor = new Color(0.28f, 0.12f, 0.035f, 1f);
+        boardOutline.effectDistance = new Vector2(6f, -6f);
+        AddWoodDetail(board.rectTransform, board.rectTransform.sizeDelta);
+
+        TextMeshProUGUI title = CreateText(template, root, "Guide Title", new Vector2(0f, 310f), new Vector2(1100f, 72f), 48f);
+        title.text = "HOW TO PLAY";
+        title.color = new Color(0.28f, 0.12f, 0.035f);
+        TextMeshProUGUI subtitle = CreateText(template, root, "Guide Subtitle", new Vector2(0f, 255f), new Vector2(1050f, 42f), 23f);
+        subtitle.text = "KEEP THE CHEF MOVING AND BUILD YOUR ENDLESS STREAK";
+        subtitle.color = new Color(0.38f, 0.19f, 0.07f);
+
+        CreateGuideRow(template, root, 145f, "MOVE", "ARROW KEYS / A-D  OR  DRAG / TOUCH");
+        CreateGuideRow(template, root, 35f, "GOOD FRUIT", "SPEED UP, GET SLIMMER, AND SCORE POINTS");
+        CreateGuideRow(template, root, -75f, "ROTTEN FOOD", "LOSE A HEART, SLOW DOWN, AND GET BIGGER");
+        CreateGuideRow(template, root, -185f, "HEART PICKUP", "RESTORES ONE HEART — FRUIT DOES NOT HEAL");
+
+        TextMeshProUGUI pause = CreateText(template, root, "Pause Tip", new Vector2(0f, -262f), new Vector2(900f, 36f), 20f);
+        pause.text = "PRESS ESC ANY TIME TO PAUSE";
+        pause.color = new Color(0.33f, 0.15f, 0.05f, 0.85f);
+        StyleWoodButton(FindButton("BackButton"), new Vector2(0f, -445f), new Vector2(470f, 135f), new Color(0.91f, 0.60f, 0.23f), "BACK", "RETURN TO MENU");
     }
 
     private void CreateHeading(RectTransform root, TextMeshProUGUI template, string titleText, string subtitleText)
@@ -142,7 +171,7 @@ public sealed class MenuPolish : MonoBehaviour
         hint.color = new Color(1f, 0.86f, 0.52f);
     }
 
-    private void SetButtonLayout(Button button, Vector2 position, Vector2 size, Color color, string label, string description)
+    public static void StyleWoodButton(Button button, Vector2 position, Vector2 size, Color color, string label, string description)
     {
         if (button == null)
         {
@@ -191,15 +220,20 @@ public sealed class MenuPolish : MonoBehaviour
             image.raycastTarget = true;
         }
 
+        AddWoodDetail(rect, size);
+
         TextMeshProUGUI template = FindObjectsByType<TextMeshProUGUI>(FindObjectsInactive.Include).FirstOrDefault();
         if (template != null)
         {
             TextMeshProUGUI title = CreateText(template, rect, "Polished Label", new Vector2(0f, 20f), new Vector2(size.x - 90f, 72f), size.y >= 190f ? 50f : 38f);
             title.text = label;
-            title.color = new Color(1f, 0.91f, 0.62f);
+            title.color = new Color(0.30f, 0.14f, 0.055f);
+            Shadow titleShadow = title.gameObject.AddComponent<Shadow>();
+            titleShadow.effectColor = new Color(1f, 0.86f, 0.53f, 0.72f);
+            titleShadow.effectDistance = new Vector2(2f, -2f);
             TextMeshProUGUI detail = CreateText(template, rect, "Polished Detail", new Vector2(0f, -44f), new Vector2(size.x - 80f, 38f), size.y >= 190f ? 21f : 17f);
             detail.text = description;
-            detail.color = new Color(1f, 1f, 1f, 0.78f);
+            detail.color = new Color(0.34f, 0.17f, 0.07f, 0.86f);
         }
 
         Shadow shadow = button.GetComponent<Shadow>();
@@ -215,7 +249,7 @@ public sealed class MenuPolish : MonoBehaviour
         {
             outline = button.gameObject.AddComponent<Outline>();
         }
-        outline.effectColor = new Color(1f, 0.74f, 0.30f, 0.85f);
+        outline.effectColor = new Color(0.30f, 0.14f, 0.05f, 0.95f);
         outline.effectDistance = new Vector2(4f, -4f);
 
         ColorBlock colors = button.colors;
@@ -232,7 +266,78 @@ public sealed class MenuPolish : MonoBehaviour
         {
             motion = button.gameObject.AddComponent<MenuButtonMotion>();
         }
-        motions.Add(motion);
+    }
+
+    private static void CreateGuideRow(TextMeshProUGUI template, RectTransform root, float y, string heading, string detail)
+    {
+        Image badge = CreatePanel(root, heading + " Badge", new Color(0.24f, 0.43f, 0.14f, 0.96f), new Vector2(-455f, y), new Vector2(250f, 74f));
+        Outline outline = badge.gameObject.AddComponent<Outline>();
+        outline.effectColor = new Color(0.20f, 0.09f, 0.025f, 0.9f);
+        outline.effectDistance = new Vector2(3f, -3f);
+        TextMeshProUGUI label = CreateText(template, root, heading + " Label", new Vector2(-455f, y), new Vector2(225f, 52f), 25f);
+        label.text = heading;
+        label.color = new Color(1f, 0.91f, 0.62f);
+        TextMeshProUGUI explanation = CreateText(template, root, heading + " Detail", new Vector2(165f, y), new Vector2(900f, 55f), 25f);
+        explanation.text = detail;
+        explanation.alignment = TextAlignmentOptions.Left;
+        explanation.color = new Color(0.28f, 0.12f, 0.035f);
+    }
+
+    private static void AddWoodDetail(RectTransform button, Vector2 size)
+    {
+        Image topHighlight = CreatePanel(button, "Wood Highlight", new Color(1f, 0.88f, 0.49f, 0.70f), new Vector2(0f, size.y * 0.5f - 15f), new Vector2(size.x - 38f, 11f));
+        topHighlight.rectTransform.SetAsFirstSibling();
+        for (int i = 0; i < 2; i++)
+        {
+            Image grain = CreatePanel(button, "Wood Grain", new Color(0.40f, 0.19f, 0.06f, 0.16f), new Vector2((i == 0 ? -1f : 1f) * size.x * 0.08f, i == 0 ? -4f : 37f), new Vector2(size.x * (i == 0 ? 0.64f : 0.47f), 7f));
+            grain.rectTransform.SetAsFirstSibling();
+        }
+    }
+
+    private static void CreateRopes(RectTransform root, float topY, float bottomY, float x)
+    {
+        float height = topY - bottomY + 260f;
+        float centerY = (topY + bottomY) * 0.5f;
+        foreach (float side in new[] { -1f, 1f })
+        {
+            Image dark = CreatePanel(root, "Hanging Rope", new Color(0.27f, 0.12f, 0.035f, 1f), new Vector2(side * x, centerY), new Vector2(18f, height));
+            dark.rectTransform.SetSiblingIndex(2);
+            Image light = CreatePanel(root, "Rope Highlight", new Color(0.83f, 0.52f, 0.20f, 1f), new Vector2(side * x - 3f, centerY), new Vector2(5f, height));
+            light.rectTransform.SetSiblingIndex(3);
+        }
+    }
+
+    public static void ApplyJungleBackdrop(Canvas canvas)
+    {
+        Texture2D texture = Resources.Load<Texture2D>("JungleMenuBackground");
+        if (texture == null)
+        {
+            Debug.LogWarning("MenuPolish: JungleMenuBackground could not be loaded.");
+            return;
+        }
+
+        RectTransform root = (RectTransform)canvas.transform;
+        foreach (RectTransform child in root.Cast<Transform>().OfType<RectTransform>().ToArray())
+        {
+            Image image = child.GetComponent<Image>();
+            if (image != null && child.GetComponent<Button>() == null &&
+                child.anchorMin.x <= 0.01f && child.anchorMin.y <= 0.01f &&
+                child.anchorMax.x >= 0.99f && child.anchorMax.y >= 0.99f)
+            {
+                child.gameObject.SetActive(false);
+            }
+        }
+
+        GameObject obj = new GameObject("Jungle Background", typeof(RectTransform), typeof(CanvasRenderer), typeof(RawImage));
+        RectTransform rect = (RectTransform)obj.transform;
+        rect.SetParent(root, false);
+        rect.anchorMin = Vector2.zero;
+        rect.anchorMax = Vector2.one;
+        rect.offsetMin = rect.offsetMax = Vector2.zero;
+        RawImage background = obj.GetComponent<RawImage>();
+        background.texture = texture;
+        background.raycastTarget = false;
+        rect.SetAsFirstSibling();
     }
 
     private static Button FindButton(string name)

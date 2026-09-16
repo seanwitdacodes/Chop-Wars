@@ -201,12 +201,6 @@ public class PlayerMovement : MonoBehaviour
 
             playerGrow?.Shrink();
             scoreManager?.RegisterHealthyPickup();
-            if (currentHits < maxHits)
-            {
-                currentHits++;
-                healthBar?.Heal(1);
-            }
-
             PlayFlash(pickupFlashColor);
         }
         else if (other.CompareTag("Heart"))

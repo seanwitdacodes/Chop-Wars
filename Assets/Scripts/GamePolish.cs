@@ -166,18 +166,19 @@ public sealed class GamePolish : MonoBehaviour
         }
 
         RectTransform root = canvas.transform as RectTransform;
-        Image shade = CreatePanel(root, "Menu Shade", new Color(0.015f, 0.08f, 0.14f, 0.34f), Vector2.zero, new Vector2(1920f, 1080f));
+        MenuPolish.ApplyJungleBackdrop(canvas);
+        Image shade = CreatePanel(root, "Menu Shade", new Color(0.08f, 0.20f, 0.07f, 0.16f), Vector2.zero, new Vector2(1920f, 1080f));
         shade.rectTransform.SetSiblingIndex(1);
 
-        Image card = CreatePanel(root, "Ghana Card", new Color(0.035f, 0.13f, 0.17f, 0.90f), new Vector2(0f, -20f), new Vector2(1320f, 500f));
+        Image card = CreatePanel(root, "Ghana Card", new Color(0.22f, 0.11f, 0.035f, 0.88f), new Vector2(0f, -20f), new Vector2(1320f, 500f));
         card.rectTransform.SetSiblingIndex(2);
-        Image accent = CreatePanel(root, "Ghana Card Accent", new Color(0.96f, 0.63f, 0.12f, 1f), new Vector2(0f, 224f), new Vector2(1320f, 12f));
+        Image accent = CreatePanel(root, "Ghana Card Accent", new Color(1f, 0.70f, 0.24f, 1f), new Vector2(0f, 224f), new Vector2(1320f, 12f));
         accent.rectTransform.SetSiblingIndex(3);
 
         CreateText(template, root, "Title", new Vector2(0.5f, 0.5f), new Vector2(0f, 425f), new Vector2(1300f, 95f), 64f, TextAlignmentOptions.Center).text = "CHOOSE YOUR KITCHEN";
         TextMeshProUGUI subtitle = CreateText(template, root, "Subtitle", new Vector2(0.5f, 0.5f), new Vector2(0f, 350f), new Vector2(1200f, 60f), 28f, TextAlignmentOptions.Center);
         subtitle.text = "Travel the world one endless recipe run at a time";
-        subtitle.color = new Color(0.80f, 0.94f, 1f);
+        subtitle.color = new Color(1f, 0.91f, 0.66f);
 
         Button ghana = FindObjectsByType<Button>(FindObjectsInactive.Include).FirstOrDefault(button => button.name == "Ghana-Button");
         RectTransform icon = GameObject.Find("Icon")?.transform as RectTransform;
@@ -212,10 +213,8 @@ public sealed class GamePolish : MonoBehaviour
         Button back = FindObjectsByType<Button>(FindObjectsInactive.Include).FirstOrDefault(button => button.name == "BackButton");
         if (back != null)
         {
-            RectTransform rect = (RectTransform)back.transform;
-            rect.anchoredPosition = new Vector2(-760f, -445f);
-            rect.sizeDelta = new Vector2(330f, 132f);
-            rect.SetAsLastSibling();
+            MenuPolish.StyleWoodButton(back, new Vector2(-760f, -445f), new Vector2(360f, 125f),
+                new Color(0.91f, 0.60f, 0.23f), "BACK", "RETURN TO MENU");
         }
     }
 

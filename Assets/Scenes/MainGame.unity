@@ -2836,9 +2836,10 @@ MonoBehaviour:
   - {fileID: 6963025095289207306, guid: 9af73c1a19c96410aaac432d3ff3bb66, type: 3}
   coinChance: 0.07
   spawnAreaSize: {x: 16, y: 1}
-  startInterval: 2
-  halveEverySeconds: 30
-  healthyChance: 0.30
+  startInterval: 2.5
+  halveEverySeconds: 90
+  minInterval: 0.85
+  healthyChance: 0.12
 --- !u!1 &1170395557
 GameObject:
   m_ObjectHideFlags: 0
