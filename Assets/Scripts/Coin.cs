@@ -2,25 +2,39 @@ using UnityEngine;
 
 public class Coin : MonoBehaviour
 {
-    public int coinValue = 50; // default coin value
+    public int coinValue = 50;
+    private bool collected;
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.CompareTag("Player"))
+        PlayerMovement player = FindPlayer(other);
+        if (collected || player == null || !player.CanCollectPickups)
         {
-            // Find the ScoreManager in the scene
-            ScoreManager manager = FindObjectOfType<ScoreManager>();
-
-            if (manager != null)
-            {
-                manager.AddScore(coinValue); // +50 points
-            }
-            else
-            {
-                Debug.LogError(" No ScoreManager found in the scene!");
-            }
-
-            Destroy(gameObject); // remove coin after pickup
+            return;
         }
+
+        ScoreManager manager = FindAnyObjectByType<ScoreManager>();
+
+        if (manager == null || manager.IsScoringStopped)
+        {
+            return;
+        }
+
+        collected = true;
+        manager.RegisterCoin(coinValue);
+        gameObject.SetActive(false);
+        Destroy(gameObject);
+    }
+
+    private static PlayerMovement FindPlayer(Collider2D other)
+    {
+        if (other.TryGetComponent(out PlayerMovement player))
+        {
+            return player;
+        }
+
+        return other.attachedRigidbody != null
+            ? other.attachedRigidbody.GetComponent<PlayerMovement>()
+            : null;
     }
 }

@@ -3,32 +3,45 @@ using UnityEngine.SceneManagement;
 
 public class ButtonScript : MonoBehaviour
 {
-    // Load Menu2 scene
-    public void LoadMenu2()
+    private static bool sceneLoadRequested;
+
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
+    private static void InitializeNavigation()
     {
-        SceneManager.LoadScene("Menu2");
+        sceneLoadRequested = false;
+        Time.timeScale = 1f;
+        // Remove first so entering Play Mode without a domain reload is also safe.
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+        SceneManager.sceneLoaded += OnSceneLoaded;
     }
 
-    // Load Guide scene
-    public void LoadGuide()
+    private static void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        SceneManager.LoadScene("Guide");
+        sceneLoadRequested = false;
     }
 
-    public void LoadSettings()
+    // These methods are connected by the scenes' serialized button callbacks.
+    public void LoadMenu2() => LoadScene("Menu2");
+    public void LoadGuide() => LoadScene("Guide");
+    public void LoadSettings() => LoadScene("Settings");
+    public void LoadLevels() => LoadScene("Levels");
+    public void LoadGame() => LoadScene("MainGame");
 
+    public static void LoadScene(string sceneName)
     {
-        SceneManager.LoadScene("Settings");
-    }
+        if (sceneLoadRequested)
+        {
+            return;
+        }
 
-    public void LoadLevels()
-    {
-        SceneManager.LoadScene("Levels");
-    }
+        if (string.IsNullOrWhiteSpace(sceneName) || !Application.CanStreamedLevelBeLoaded(sceneName))
+        {
+            Debug.LogError($"ButtonScript: Scene '{sceneName}' is not in Build Settings.");
+            return;
+        }
 
-    public void LoadGame()
-    {
-        SceneManager.LoadScene("MainGame");
+        sceneLoadRequested = true;
+        Time.timeScale = 1f;
+        SceneManager.LoadScene(sceneName);
     }
-
 }

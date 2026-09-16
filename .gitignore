@@ -68,10 +68,4 @@ crashlytics-build.properties
 /[Aa]sset[Bb]undles/
 /[Aa]ddressable[Aa]ssetsData/*/platformmap.json
 
-# ===================================== #
-# Local Unity settings                  #
-# ===================================== #
-/ProjectSettings/EditorBuildSettings.asset
-/ProjectSettings/QualitySettings.asset
-/ProjectSettings/GraphicsSettings.asset
-
+# Build scenes and rendering settings are shared project configuration.
