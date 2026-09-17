@@ -14,7 +14,6 @@ public sealed class GamePolish : MonoBehaviour
     private PlayerMovement player;
     private TextMeshProUGUI highScoreText;
     private TextMeshProUGUI comboText;
-    private TextMeshProUGUI recoveryText;
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
     private static void Initialize()
@@ -66,10 +65,6 @@ public sealed class GamePolish : MonoBehaviour
                 : $"FRESH STREAK {score.Combo}";
         }
 
-        if (recoveryText != null && player != null)
-        {
-            recoveryText.gameObject.SetActive(player.IsRecovering);
-        }
     }
 
     private void PolishGameplay()
@@ -148,10 +143,58 @@ public sealed class GamePolish : MonoBehaviour
         highScoreText.text = $"HIGH SCORE  {score.GetHighScore():0000}";
         comboText = CreateText(template, canvas, "Combo", new Vector2(0.5f, 1f), new Vector2(0f, -234f), new Vector2(560f, 56f), 30f, TextAlignmentOptions.Center);
         comboText.color = new Color(0.16f, 0.26f, 0.065f);
-        recoveryText = CreateText(template, canvas, "Recovery", new Vector2(0.5f, 0.5f), new Vector2(0f, 130f), new Vector2(850f, 110f), 52f, TextAlignmentOptions.Center);
-        recoveryText.text = "BACK TO THE CUTTING BOARD!";
-        recoveryText.color = new Color(1f, 0.82f, 0.25f);
-        recoveryText.gameObject.SetActive(false);
+        PolishEndScreen(template);
+    }
+
+    private static void PolishEndScreen(TextMeshProUGUI template)
+    {
+        LoseScreenManager ending = FindAnyObjectByType<LoseScreenManager>();
+        if (ending == null || ending.loseScreen == null)
+            return;
+
+        RectTransform root = (RectTransform)ending.loseScreen.transform;
+        Image shade = root.GetComponent<Image>();
+        if (shade != null)
+            shade.color = new Color(0.055f, 0.085f, 0.025f, 0.78f);
+
+        Image board = CreatePanel(root, "Game Over Wood Board", new Color(0.86f, 0.57f, 0.22f), Vector2.zero, new Vector2(1040f, 720f));
+        board.rectTransform.SetAsFirstSibling();
+        board.sprite = MenuPolish.GetRoundedSprite();
+        board.type = Image.Type.Sliced;
+        Image inset = CreatePanel(board.rectTransform, "Dark Wood", new Color(0.22f, 0.105f, 0.035f), Vector2.zero, new Vector2(1024f, 704f));
+        inset.sprite = MenuPolish.GetRoundedSprite();
+        inset.type = Image.Type.Sliced;
+        StyleEndLabel(ending.titleText, 250f, 76f, new Color(1f, 0.84f, 0.43f));
+        StyleEndLabel(ending.finalScoreText, 120f, 52f, Color.white);
+        StyleEndLabel(ending.highScoreText, 35f, 36f, new Color(1f, 0.89f, 0.61f));
+        TextMeshProUGUI hint = CreateText(template, root, "Game Over Hint", new Vector2(0.5f, 0.5f), new Vector2(0f, -65f), new Vector2(900f, 50f), 25f, TextAlignmentOptions.Center);
+        hint.text = "OUT OF HEARTS — GIVE IT ANOTHER SHOT";
+        hint.color = new Color(1f, 0.89f, 0.72f);
+
+        foreach (Button button in new[] { ending.restartButton, ending.menuButton })
+        {
+            if (button == null) continue;
+            foreach (TextMeshProUGUI oldLabel in button.GetComponentsInChildren<TextMeshProUGUI>(true))
+                oldLabel.gameObject.SetActive(false);
+        }
+        Color wood = new Color(0.91f, 0.60f, 0.23f);
+        MenuPolish.StyleWoodButton(ending.restartButton, new Vector2(-225f, -235f), new Vector2(390f, 145f), wood, "TRY AGAIN", "START A FRESH RUN");
+        MenuPolish.StyleWoodButton(ending.menuButton, new Vector2(225f, -235f), new Vector2(390f, 145f), wood, "MENU", "CHOOSE YOUR STATION");
+    }
+
+    private static void StyleEndLabel(TextMeshProUGUI label, float y, float size, Color color)
+    {
+        if (label == null) return;
+        label.rectTransform.anchorMin = label.rectTransform.anchorMax = new Vector2(0.5f, 0.5f);
+        label.rectTransform.anchoredPosition = new Vector2(0f, y);
+        label.rectTransform.sizeDelta = new Vector2(950f, 100f);
+        label.alignment = TextAlignmentOptions.Center;
+        label.fontStyle = FontStyles.Bold;
+        label.enableAutoSizing = true;
+        label.fontSizeMin = 24f;
+        label.fontSizeMax = size;
+        label.color = color;
+        label.raycastTarget = false;
     }
 
     private static void AddFloorLayer(Transform floor, Sprite sprite, string name, Color color, float y, float height, int order)

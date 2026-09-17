@@ -68,7 +68,7 @@ public class Spawner : MonoBehaviour
                 continue;
             }
 
-            // Scaled scene time freezes during pauses and is not reset by health recovery.
+            // Scaled scene time freezes during pauses and resets only for a new run.
             float elapsed = Time.timeSinceLevelLoad;
             SpawnEnemy(elapsed);
             yield return new WaitForSeconds(GetSpawnInterval(elapsed));

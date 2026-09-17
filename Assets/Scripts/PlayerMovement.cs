@@ -27,8 +27,6 @@ public class PlayerMovement : MonoBehaviour
     public Color damageFlashColor = new Color(1f, 0.55f, 0.55f, 1f);
     public Color pickupFlashColor = new Color(0.8f, 1f, 0.8f, 1f);
     public Color healFlashColor = new Color(1f, 0.92f, 0.6f, 1f);
-    public Color winFlashColor = new Color(1f, 0.92f, 0.45f, 1f);
-    public float recoveryDuration = 0.8f;
 
     [Header("UI References")]
     public HealthBar healthBar;
@@ -46,16 +44,14 @@ public class PlayerMovement : MonoBehaviour
     private Color originalSpriteColor = Color.white;
     private int currentHits;
     private bool isRoundOver = false;
-    private bool isRecovering;
     private float horizontalInput;
     private float pointerTargetX;
     private bool hasPointerTarget;
     private float startingMoveSpeed;
 
     public bool IsRoundOver => isRoundOver;
-    public bool CanCollectPickups => !isRoundOver && !isRecovering && (pauseManager == null || !pauseManager.IsPaused);
+    public bool CanCollectPickups => !isRoundOver && (pauseManager == null || !pauseManager.IsPaused);
     public int CurrentHealth => currentHits;
-    public bool IsRecovering => isRecovering;
 
     private void Start()
     {
@@ -188,7 +184,7 @@ public class PlayerMovement : MonoBehaviour
 
             if (currentHits <= 0)
             {
-                StartCoroutine(RecoverFromEmptyHealth());
+                EndRun();
             }
         }
         else if (other.CompareTag("Healthy"))
@@ -230,29 +226,37 @@ public class PlayerMovement : MonoBehaviour
         Destroy(pickup);
     }
 
-    private System.Collections.IEnumerator RecoverFromEmptyHealth()
+    private void EndRun()
     {
-        if (isRecovering)
+        if (isRoundOver)
         {
-            yield break;
+            return;
         }
 
-        isRecovering = true;
+        isRoundOver = true;
         horizontalInput = 0f;
         hasPointerTarget = false;
-        playerGrow?.ResetSize();
-        moveSpeed = startingMoveSpeed;
-        PlayFlash(winFlashColor);
-        yield return new WaitForSeconds(Mathf.Max(0.1f, recoveryDuration));
-
-        currentHits = maxHits;
-        healthBar?.ResetHealth();
+        if (hitStopRoutine != null)
+        {
+            StopCoroutine(hitStopRoutine);
+            hitStopRoutine = null;
+        }
         if (rb != null)
         {
-            rb.position = new Vector2(0f, rb.position.y);
+            rb.linearVelocity = Vector2.zero;
+            rb.angularVelocity = 0f;
         }
 
-        isRecovering = false;
+        scoreManager?.StopScoring();
+        foreach (Spawner spawner in FindObjectsByType<Spawner>())
+            spawner.enabled = false;
+
+        Time.timeScale = 0f;
+        LoseScreenManager ending = FindAnyObjectByType<LoseScreenManager>();
+        if (ending != null)
+            ending.ShowLoseScreen();
+        else
+            Debug.LogError("PlayerMovement: No game-over screen found.", this);
     }
 
     private bool TryGetPointerTargetX(out float targetX)

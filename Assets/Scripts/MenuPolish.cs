@@ -159,7 +159,7 @@ public sealed class MenuPolish : MonoBehaviour
         CreateGuideRow(template, root, -185f, "HEART PICKUP", "RESTORES ONE HEART — FRUIT DOES NOT HEAL");
 
         TextMeshProUGUI pause = CreateText(template, root, "Pause Tip", new Vector2(0f, -262f), new Vector2(900f, 36f), 20f);
-        pause.text = "PRESS ESC ANY TIME TO PAUSE";
+        pause.text = "ZERO HEARTS ENDS THE RUN  •  ESC TO PAUSE";
         pause.color = new Color(0.33f, 0.15f, 0.05f, 0.85f);
         StyleWoodButton(FindButton("BackButton"), new Vector2(0f, -445f), new Vector2(470f, 135f), new Color(0.91f, 0.60f, 0.23f), "BACK", "RETURN TO MENU");
     }

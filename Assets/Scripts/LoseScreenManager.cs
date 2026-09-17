@@ -92,6 +92,7 @@ public class LoseScreenManager : MonoBehaviour
             return;
         }
 
+        scoreManager.StopScoring();
         int finalScore = scoreManager.GetScore();
         int highScore = scoreManager.GetHighScore();
         int targetScore = scoreManager.GetTargetScore();
@@ -101,12 +102,12 @@ public class LoseScreenManager : MonoBehaviour
             string scoreDisplay = targetScore > 0
                 ? $"{finalScore:0000}/{targetScore:0000}"
                 : finalScore.ToString("0000");
-            finalScoreText.text = (didWin ? "Cleared: " : "Score: ") + scoreDisplay;
+            finalScoreText.text = (didWin ? "CLEARED  " : "FINAL SCORE  ") + scoreDisplay;
         }
 
         if (highScoreText != null)
         {
-            highScoreText.text = "Best: " + highScore.ToString("0000");
+            highScoreText.text = "HIGH SCORE  " + highScore.ToString("0000");
         }
     }
 

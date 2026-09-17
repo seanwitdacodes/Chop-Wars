@@ -361,21 +361,12 @@ public static class ChopWarsValidation
             "Restarting a paused run must reset health, score, and time.");
         Pass("Pause-menu Restart starts a fresh playable round");
 
-        player.hitStopDuration = 0f;
-        for (int i = 0; i < player.maxHits; i++) yield return Collect("Chicken", player);
-        yield return WaitFrames(2);
-        Require(player.IsRecovering && !ending.IsScreenVisible && Time.timeScale > 0f,
-            "Empty health must start recovery without showing an end screen or freezing gameplay.");
-        yield return Capture("10-endless-recovery");
-        yield return WaitSeconds(player.recoveryDuration + 0.2f);
-        Require(health.currentHealth == player.maxHits && !player.IsRoundOver && !ending.IsScreenVisible,
-            "An endless run must restore health and remain playable after recovery.");
         int endlessScore = score.GetScore();
         score.AddScore(1000);
         yield return WaitFrames(2);
         Require(score.GetTargetScore() == 0 && score.GetScore() >= endlessScore + 1000 && !ending.IsScreenVisible,
             "Scores must continue forever without a victory screen.");
-        Pass("Empty health recovers safely and high scores never end the run");
+        Pass("High scores never end a run while the player still has hearts");
 
         TMPro.TextMeshProUGUI highScoreLabel = Object.FindObjectsByType<TMPro.TextMeshProUGUI>()
             .FirstOrDefault(label => label.name == "High Score");
@@ -391,6 +382,89 @@ public static class ChopWarsValidation
         yield return Capture("11-score-and-personal-best");
         Pass("High-score display updates live, sits below the score, and preserves the record on reset");
 
+        score.AddScore(137);
+        player.hitStopDuration = 0f;
+        for (int i = 0; i < player.maxHits - 1; i++) yield return Collect("Chicken", player);
+        Require(player.CurrentHealth == 1 && health.currentHealth == 1 && !player.IsRoundOver && !ending.IsScreenVisible,
+            "The run must remain active until the final heart is lost.");
+        Find<Spawner>().enabled = true;
+        yield return WaitFrames(2);
+        yield return Collect("Chicken", player);
+        Require(player.CurrentHealth == 0 && health.currentHealth == 0 && player.IsRoundOver &&
+            !player.CanCollectPickups && ending.IsScreenVisible && score.IsScoringStopped && Time.timeScale == 0f,
+            "The final heart must immediately end the run and show the game-over screen.");
+        Require(Object.FindObjectsByType<Spawner>().All(spawner => !spawner.enabled),
+            "Game over must disable all spawners.");
+        int finalScore = score.GetScore();
+        Require(ending.finalScoreText.text == $"FINAL SCORE  {finalScore:0000}" &&
+            ending.highScoreText.text == $"HIGH SCORE  {score.GetHighScore():0000}" &&
+            PlayerPrefs.GetInt("Highscore", 0) == score.GetHighScore(),
+            "Game-over results must show the final score and saved high score.");
+        yield return Capture("10-game-over", 1280, 800);
+        Vector3 endPosition = player.transform.position;
+        float endRunTime = score.RunTime;
+        int endPickupCount = Pickups().Length;
+        yield return WaitSeconds(1.2f);
+        Require(player.CurrentHealth == 0 && player.transform.position == endPosition &&
+            score.GetScore() == finalScore && score.RunTime == endRunTime && Pickups().Length == endPickupCount,
+            "Game over must freeze score, movement, and spawning without automatically refilling hearts.");
+        Pass("The last heart ends the run, saves results, and freezes gameplay without recovery");
+
+        pause = Find<PauseManager>();
+        pause.TogglePause();
+        pause.ResumeGame();
+        Require(Time.timeScale == 0f && !pause.IsPaused && !pause.pauseMenu.activeSelf,
+            "Pause or Resume must not bypass game over.");
+        foreach (string name in new[] { "Heart", "Mango", "Coin", "Chicken" })
+        {
+            GameObject pickup = Object.Instantiate(AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Prefabs/" + name + ".prefab"));
+            if (name == "Coin")
+                pickup.SendMessage("OnTriggerEnter2D", player.GetComponent<Collider2D>());
+            else
+                player.SendMessage("OnTriggerEnter2D", pickup.GetComponent<Collider2D>());
+            Require(pickup.activeSelf && player.CurrentHealth == 0 && score.GetScore() == finalScore,
+                "Late " + name + " contact must not revive or score after game over.");
+            Object.Destroy(pickup);
+        }
+        score.AddScore(1000);
+        Require(score.GetScore() == finalScore, "Score awards after game over must be ignored.");
+        Pass("Pause controls and late pickup callbacks cannot resume, heal, or score a finished run");
+
+        previousPlayer = player;
+        Click("RestartButton");
+        yield return WaitForNewPlayer(previousPlayer);
+        player = Find<PlayerMovement>();
+        score = Find<ScoreManager>();
+        ending = Find<LoseScreenManager>();
+        Require(player.CurrentHealth == player.maxHits && score.GetScore() <= 1 && !score.IsScoringStopped &&
+            score.GetHighScore() == savedHighScore && !ending.IsScreenVisible && !player.IsRoundOver &&
+            Time.timeScale == 1f && Find<Spawner>().enabled,
+            "Try Again must reset health, score, difficulty, and spawning while preserving the record.");
+        Require(Time.timeSinceLevelLoad < 2f && Find<BackgroundMusic>() == music && musicSource.isPlaying,
+            "A new run must reset elapsed difficulty time without duplicating or stopping music.");
+        Pass("Game-over Try Again starts a fresh run and preserves the high score and music");
+        DisableSpawnersAndClearPickups();
+        yield return WaitFrames(2);
+        player.hitStopDuration = 0.2f;
+        for (int i = 0; i < player.maxHits; i++)
+        {
+            GameObject food = Object.Instantiate(AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Prefabs/Chicken.prefab"),
+                player.GetComponent<Collider2D>().bounds.center, Quaternion.identity);
+            food.GetComponent<Rigidbody2D>().gravityScale = 0f;
+        }
+        Physics2D.SyncTransforms();
+        yield return WaitUntil(() => player.IsRoundOver, "Simultaneous fatal hits must end the run.", 3f);
+        yield return WaitSeconds(0.4f);
+        Require(Time.timeScale == 0f && ending.IsScreenVisible && player.CurrentHealth == 0,
+            "A pending hit-stop timer must never unfreeze a finished run.");
+        Pass("Simultaneous fatal hits cannot leave a hit-stop timer that resumes the game");
+        Click("MenuButton");
+        yield return WaitForScene("Menu2");
+        Require(Time.timeScale == 1f, "Game-over Menu must restore the clock and return to Menu2.");
+        Pass("Game-over Menu returns to Menu2 with working navigation");
+
+        yield return ClickAndLoad("Levels_Button", "Levels");
+        yield return ClickAndLoad("Ghana-Button", "MainGame");
         Click("PauseButton");
         yield return WaitFrames(2);
         Click("MainMenu");
