@@ -101,6 +101,16 @@ public sealed class MenuPolish : MonoBehaviour
         StyleWoodButton(FindButton("Levels_Button"), new Vector2(0f, 205f), new Vector2(780f, 190f), wood, "LEVELS", "CHOOSE A KITCHEN");
         StyleWoodButton(FindButton("SettingButton"), new Vector2(0f, -30f), new Vector2(780f, 190f), wood, "SETTINGS", "AUDIO & OPTIONS");
         StyleWoodButton(FindButton("GuideButton"), new Vector2(0f, -265f), new Vector2(780f, 190f), wood, "GUIDE", "LEARN HOW TO PLAY");
+
+        GameObject backObject = new GameObject("BackButton", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image), typeof(Button));
+        backObject.transform.SetParent(root, false);
+        Button back = backObject.GetComponent<Button>();
+        back.targetGraphic = backObject.GetComponent<Image>();
+        back.onClick.AddListener(() => SceneManager.LoadScene("MainMenu"));
+        StyleWoodButton(back, new Vector2(-760f, -445f), new Vector2(360f, 125f), wood, "BACK", "MAIN PAGE");
+        RectTransform backRect = (RectTransform)back.transform;
+        backRect.anchorMin = backRect.anchorMax = Vector2.zero;
+        backRect.anchoredPosition = new Vector2(230f, 110f);
     }
 
     private void PolishSettings(Canvas canvas, TextMeshProUGUI template)
@@ -381,7 +391,7 @@ public sealed class MenuPolish : MonoBehaviour
         return text;
     }
 
-    private static Sprite GetRoundedSprite()
+    internal static Sprite GetRoundedSprite()
     {
         if (roundedSprite != null)
         {

@@ -12,7 +12,7 @@ public sealed class GamePolish : MonoBehaviour
     private static Sprite solidSprite;
     private ScoreManager score;
     private PlayerMovement player;
-    private TextMeshProUGUI stageText;
+    private TextMeshProUGUI highScoreText;
     private TextMeshProUGUI comboText;
     private TextMeshProUGUI recoveryText;
 
@@ -53,9 +53,9 @@ public sealed class GamePolish : MonoBehaviour
             return;
         }
 
-        if (stageText != null)
+        if (highScoreText != null)
         {
-            stageText.text = $"DAY {score.Stage}   •   BEST {score.GetHighScore():0000}";
+            highScoreText.text = $"HIGH SCORE  {score.GetHighScore():0000}";
         }
 
         if (comboText != null)
@@ -123,10 +123,31 @@ public sealed class GamePolish : MonoBehaviour
         }
 
         Transform canvas = template.transform.parent;
-        stageText = CreateText(template, canvas, "Run Status", new Vector2(0f, 1f), new Vector2(225f, -135f), new Vector2(360f, 54f), 28f, TextAlignmentOptions.Left);
-        stageText.color = new Color(1f, 0.92f, 0.62f);
-        comboText = CreateText(template, canvas, "Combo", new Vector2(0.5f, 1f), new Vector2(0f, -135f), new Vector2(560f, 56f), 30f, TextAlignmentOptions.Center);
-        comboText.color = new Color(0.70f, 1f, 0.68f);
+        Image plaque = CreatePanel((RectTransform)canvas, "Score Plaque", new Color(0.86f, 0.57f, 0.22f), new Vector2(0f, -112f), new Vector2(560f, 180f));
+        plaque.rectTransform.anchorMin = plaque.rectTransform.anchorMax = new Vector2(0.5f, 1f);
+        plaque.rectTransform.SetAsFirstSibling();
+        plaque.sprite = MenuPolish.GetRoundedSprite();
+        plaque.type = Image.Type.Sliced;
+        Image inset = CreatePanel(plaque.rectTransform, "Dark Wood", new Color(0.19f, 0.085f, 0.025f), Vector2.zero, new Vector2(548f, 168f));
+        inset.sprite = MenuPolish.GetRoundedSprite();
+        inset.type = Image.Type.Sliced;
+        CreatePanel(plaque.rectTransform, "Score Divider", new Color(0.86f, 0.57f, 0.22f, 0.6f), new Vector2(0f, 8f), new Vector2(460f, 2f));
+
+        template.rectTransform.anchorMin = template.rectTransform.anchorMax = new Vector2(0.5f, 1f);
+        template.rectTransform.anchoredPosition = new Vector2(0f, -66f);
+        template.rectTransform.sizeDelta = new Vector2(470f, 66f);
+        template.alignment = TextAlignmentOptions.Center;
+        template.enableAutoSizing = true;
+        template.fontSizeMin = 26f;
+        template.fontSizeMax = 52f;
+        highScoreText = CreateText(template, canvas, "High Score", new Vector2(0.5f, 1f), new Vector2(0f, -148f), new Vector2(500f, 50f), 34f, TextAlignmentOptions.Center);
+        highScoreText.color = new Color(1f, 0.89f, 0.61f);
+        highScoreText.enableAutoSizing = true;
+        highScoreText.fontSizeMin = 24f;
+        highScoreText.fontSizeMax = 34f;
+        highScoreText.text = $"HIGH SCORE  {score.GetHighScore():0000}";
+        comboText = CreateText(template, canvas, "Combo", new Vector2(0.5f, 1f), new Vector2(0f, -234f), new Vector2(560f, 56f), 30f, TextAlignmentOptions.Center);
+        comboText.color = new Color(0.16f, 0.26f, 0.065f);
         recoveryText = CreateText(template, canvas, "Recovery", new Vector2(0.5f, 0.5f), new Vector2(0f, 130f), new Vector2(850f, 110f), 52f, TextAlignmentOptions.Center);
         recoveryText.text = "BACK TO THE CUTTING BOARD!";
         recoveryText.color = new Color(1f, 0.82f, 0.25f);

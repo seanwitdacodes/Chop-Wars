@@ -13,7 +13,7 @@ public sealed class FallingFoodMotion : MonoBehaviour
     public void Configure(float difficulty)
     {
         body = GetComponent<Rigidbody2D>();
-        difficulty = Mathf.Clamp(difficulty, 1f, 2.25f);
+        difficulty = Mathf.Clamp(difficulty, 1f, 3f);
         body.gravityScale *= difficulty;
         spin = Random.Range(-55f, 55f);
         swaySpeed = Random.Range(1.2f, 2.6f);

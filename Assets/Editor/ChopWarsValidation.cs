@@ -112,6 +112,14 @@ public static class ChopWarsValidation
             Require(prefab.GetComponent<SpriteRenderer>()?.sprite != null, path + " needs a visible sprite.");
         }
         Pass(prefabs.Length + " falling food/pickup prefabs have valid scripts, sprites, and physics");
+
+        AudioClip soundtrack = Resources.Load<AudioClip>("JungleGroove");
+        Require(soundtrack != null && soundtrack.length > 20f, "Original soundtrack asset is missing or incomplete.");
+        float[] audioSamples = new float[4096];
+        Require(soundtrack.GetData(audioSamples, soundtrack.frequency / 4), "Soundtrack samples must be readable.");
+        float audioPeak = audioSamples.Max(sample => Mathf.Abs(sample));
+        Require(audioPeak > 0.01f && audioPeak < 0.99f, "Soundtrack must contain audible, unclipped samples.");
+        Pass("Original soundtrack imports as audible, unclipped audio");
     }
 
     private static void ValidateHierarchy(GameObject root, string assetPath)
@@ -196,9 +204,23 @@ public static class ChopWarsValidation
     private static IEnumerator ExerciseGame()
     {
         yield return WaitForScene("MainMenu");
+        BackgroundMusic music = Find<BackgroundMusic>();
+        AudioSource musicSource = music.GetComponent<AudioSource>();
+        Require(musicSource.clip != null && musicSource.clip.length > 20f && musicSource.loop &&
+            musicSource.isPlaying && musicSource.spatialBlend == 0f && musicSource.volume > 0f,
+            "Main menu must start a loaded, looping, non-spatial music track.");
         yield return Capture("01-main-menu");
         yield return ClickAndLoad("PlayButton", "Menu2");
         yield return Capture("02-menu");
+        yield return Capture("02-menu-web-aspect", 1280, 800);
+        yield return ClickAndLoad("BackButton", "MainMenu");
+        yield return ClickAndLoad("PlayButton", "Menu2");
+        Require(Find<BackgroundMusic>() == music && Object.FindObjectsByType<BackgroundMusic>().Length == 1 &&
+            musicSource.isPlaying, "Main-page back navigation must retain one uninterrupted music player.");
+        int playbackPosition = musicSource.timeSamples;
+        yield return WaitSeconds(0.25f);
+        Require(musicSource.timeSamples != playbackPosition, "Music playback position must advance.");
+        Pass("Menu2 Back returns to the main page; music persists without duplicate players");
         yield return ClickAndLoad("GuideButton", "Guide");
         yield return Capture("03-guide");
         yield return ClickAndLoad("BackButton", "Menu2");
@@ -218,6 +240,8 @@ public static class ChopWarsValidation
         Require(Mathf.Approximately(AudioListener.volume, previousSound == 1 ? 0f : 1f),
             "Sound setting did not survive a scene change.");
         Find<SettingsManager>().soundButton.onClick.Invoke();
+        Require(musicSource.isPlaying && Find<BackgroundMusic>() == music,
+            "Sound toggles and scene changes must not restart or destroy the soundtrack.");
         Pass("Settings: button toggles volume and persists across scene changes");
         yield return ClickAndLoad("BackButton", "Menu2");
         yield return ClickAndLoad("Levels_Button", "Levels");
@@ -241,8 +265,12 @@ public static class ChopWarsValidation
         Require(health.hearts != null && health.hearts.Length == player.maxHits, "Every health point needs a visible heart.");
         Require(!pause.IsPaused && !ending.IsScreenVisible && Time.timeScale > 0f,
             "A new run must start with gameplay active and overlays hidden.");
+        Require(Find<BackgroundMusic>() == music && musicSource.isPlaying,
+            "Gameplay must continue the same soundtrack started in the main menu.");
+        Pass("Background music continues into gameplay and obeys the persistent sound toggle");
         yield return WaitUntil(() => Pickups().Length > 0, "Spawner did not produce a falling pickup.", 6f);
         Pass("MainGame initializes a character, full health, score, physics, and active spawner");
+        ValidateEndlessDifficulty(Find<Spawner>());
         DisableSpawnersAndClearPickups();
         yield return WaitFrames(2);
         yield return Capture("06-character-normal");
@@ -253,10 +281,12 @@ public static class ChopWarsValidation
             "Pause button must freeze gameplay and reveal the pause menu.");
         yield return Capture("07-pause");
         int pausedScore = score.GetScore();
+        float pausedRunTime = score.RunTime;
         Vector3 pausedPosition = player.transform.position;
         yield return WaitSeconds(1.1f);
-        Require(score.GetScore() == pausedScore && player.transform.position == pausedPosition,
-            "Score or player advanced while paused.");
+        Require(score.GetScore() == pausedScore && player.transform.position == pausedPosition &&
+            Mathf.Approximately(score.RunTime, pausedRunTime),
+            "Score, run time, or player advanced while paused.");
         Click("Resume");
         yield return WaitFrames(2);
         Require(!pause.IsPaused && Time.timeScale > 0f, "Resume button must restore gameplay.");
@@ -347,12 +377,88 @@ public static class ChopWarsValidation
             "Scores must continue forever without a victory screen.");
         Pass("Empty health recovers safely and high scores never end the run");
 
+        TMPro.TextMeshProUGUI highScoreLabel = Object.FindObjectsByType<TMPro.TextMeshProUGUI>()
+            .FirstOrDefault(label => label.name == "High Score");
+        Require(highScoreLabel != null && highScoreLabel.text == $"HIGH SCORE  {score.GetHighScore():0000}",
+            "The visible high score must update when a new record is reached.");
+        Require(highScoreLabel.rectTransform.position.y < score.scoreText.rectTransform.position.y,
+            "High score must appear beneath the current score.");
+        int savedHighScore = score.GetHighScore();
+        score.ResetScore();
+        yield return WaitFrames(2);
+        Require(score.GetHighScore() == savedHighScore && highScoreLabel.text == $"HIGH SCORE  {savedHighScore:0000}",
+            "Resetting the current score must preserve the visible personal best.");
+        yield return Capture("11-score-and-personal-best");
+        Pass("High-score display updates live, sits below the score, and preserves the record on reset");
+
         Click("PauseButton");
         yield return WaitFrames(2);
         Click("MainMenu");
         yield return WaitForScene("Menu2");
         Require(Time.timeScale > 0f, "Pause-menu navigation must reset time scale.");
         Pass("Pause-menu navigation ends an endless session cleanly");
+    }
+
+    private static void ValidateEndlessDifficulty(Spawner spawner)
+    {
+        float previousInterval = float.MaxValue;
+        float previousFall = 0f;
+        foreach (float elapsed in new[] { 0f, 60f, 120f, 300f, 600f })
+        {
+            float interval = spawner.GetSpawnInterval(elapsed);
+            float fall = spawner.GetFallMultiplier(elapsed);
+            Require(interval < previousInterval && interval >= 0.25f,
+                "Hazard frequency must increase throughout a run without unbounded spawn counts.");
+            Require(fall > previousFall && fall <= 3f,
+                "Falling speed must increase throughout a run without becoming unbounded.");
+            previousInterval = interval;
+            previousFall = fall;
+        }
+        Require(spawner.GetSpawnInterval(120f) < 0.65f && spawner.GetFallMultiplier(120f) >= 2f,
+            "A two-minute run must be substantially harder than a fresh run.");
+
+        GameObject[] before = Pickups();
+        typeof(Spawner).GetMethod("SpawnEnemy", BindingFlags.NonPublic | BindingFlags.Instance)
+            .Invoke(spawner, new object[] { 600f });
+        GameObject spawned = Pickups().Single(pickup => !before.Contains(pickup));
+        GameObject source = spawner.unhealthyEnemies.Concat(spawner.healthyEnemies)
+            .Concat(spawner.coinPickups).Concat(spawner.heartPickups)
+            .First(prefab => spawned.name == prefab.name + "(Clone)");
+        Require(Mathf.Approximately(spawned.GetComponent<Rigidbody2D>().gravityScale,
+                source.GetComponent<Rigidbody2D>().gravityScale * spawner.GetFallMultiplier(600f)),
+            "Late-run spawn must actually receive increased falling physics.");
+        Pass("Hazard density and falling physics ramp through ten minutes with safe endless limits");
+
+        var choose = (Func<float, GameObject>)Delegate.CreateDelegate(typeof(Func<float, GameObject>), spawner,
+            typeof(Spawner).GetMethod("ChoosePrefab", BindingFlags.NonPublic | BindingFlags.Instance));
+        UnityEngine.Random.State randomState = UnityEngine.Random.state;
+        try
+        {
+            UnityEngine.Random.InitState(91726);
+            const int samples = 60000;
+            foreach (float elapsed in new[] { 0f, 120f, 600f })
+            {
+                int fruit = 0, coins = 0, hearts = 0;
+                for (int i = 0; i < samples; i++)
+                {
+                    GameObject pickup = choose(elapsed);
+                    if (spawner.healthyEnemies.Contains(pickup)) fruit++;
+                    else if (spawner.coinPickups.Contains(pickup)) coins++;
+                    else if (spawner.heartPickups.Contains(pickup)) hearts++;
+                }
+                float perMinute = 60f / (samples * spawner.GetSpawnInterval(elapsed));
+                Require(fruit > coins && coins > hearts && fruit * perMinute < 2f &&
+                    coins * perMinute < 1f && hearts * perMinute < 0.7f,
+                    "Bonuses must remain rare at every pace, with fruit more common than coins and hearts.");
+                Require(fruit * perMinute > 1f && coins * perMinute > 0.4f && hearts * perMinute > 0.2f,
+                    "Rare bonuses must remain available in long runs.");
+            }
+        }
+        finally
+        {
+            UnityEngine.Random.state = randomState;
+        }
+        Pass("180,000 sampled spawns keep fruit, coins, and hearts rare even at late-run speed");
     }
 
     private static IEnumerator Collect(string prefabName, PlayerMovement player)
@@ -455,7 +561,7 @@ public static class ChopWarsValidation
         yield return WaitSeconds(0.12f);
     }
 
-    private static IEnumerator Capture(string name)
+    private static IEnumerator Capture(string name, int width = 1280, int height = 720)
     {
         if (SystemInfo.graphicsDeviceType == UnityEngine.Rendering.GraphicsDeviceType.Null) yield break;
         string directory = Path.GetFullPath(Path.Combine(Application.dataPath, "../Logs/ValidationScreenshots"));
@@ -463,7 +569,7 @@ public static class ChopWarsValidation
         string path = Path.Combine(directory, name + ".png");
         Camera camera = Camera.main;
         Require(camera != null, "Screenshot needs a main camera.");
-        var target = new RenderTexture(1280, 720, 24);
+        var target = new RenderTexture(width, height, 24);
         target.Create();
         RenderTexture oldTarget = camera.targetTexture;
         RenderTexture oldActive = RenderTexture.active;
@@ -472,7 +578,7 @@ public static class ChopWarsValidation
             .Where(c => c.isRootCanvas && c.renderMode == RenderMode.ScreenSpaceOverlay).ToArray();
         int[] orders = overlays.Select(c => c.sortingOrder).ToArray();
         camera.targetTexture = target;
-        camera.aspect = 1280f / 720f;
+        camera.aspect = (float)width / height;
         for (int i = 0; i < overlays.Length; i++)
         {
             overlays[i].renderMode = RenderMode.ScreenSpaceCamera;
@@ -482,6 +588,20 @@ public static class ChopWarsValidation
         }
         Canvas.ForceUpdateCanvases();
         yield return WaitFrames(2);
+        if (SceneManager.GetActiveScene().name == "Menu2")
+        {
+            Vector3[] corners = new Vector3[4];
+            foreach (Button button in Object.FindObjectsByType<Button>())
+            {
+                ((RectTransform)button.transform).GetWorldCorners(corners);
+                foreach (Vector3 corner in corners)
+                {
+                    Vector3 point = camera.WorldToViewportPoint(corner);
+                    Require(point.x >= 0f && point.x <= 1f && point.y >= 0f && point.y <= 1f,
+                        button.name + " must remain fully visible at " + width + "x" + height + ".");
+                }
+            }
+        }
         var request = new UnityEngine.Rendering.Universal.UniversalRenderPipeline.SingleCameraRequest { destination = target };
         UnityEngine.Rendering.RenderPipeline.SubmitRenderRequest(camera, request);
         RenderTexture.active = target;

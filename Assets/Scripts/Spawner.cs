@@ -9,11 +9,11 @@ public class Spawner : MonoBehaviour
 
     [Header("Heart Pickups")]
     public GameObject[] heartPickups;
-    [Range(0f, 1f)] public float heartChance = 0.005f;
+    [Range(0f, 1f)] public float heartChance = 0.012f;
 
     [Header("Coin Pickups")]
     public GameObject[] coinPickups;
-    [Range(0f, 1f)] public float coinChance = 0.005f;
+    [Range(0f, 1f)] public float coinChance = 0.02f;
 
     [Header("Spawn Area")]
     public Vector2 spawnAreaSize = new Vector2(5f, 5f);
@@ -21,12 +21,18 @@ public class Spawner : MonoBehaviour
     public float screenPadding = 0.25f;
 
     [Header("Spawn Rate (auto-ramps)")]
-    public float startInterval = 2.5f;
-    public float halveEverySeconds = 90f;
-    public float minInterval = 0.85f;
+    public float startInterval = 1.6f;
+    [Tooltip("Time to halve the remaining gap between the starting and fastest spawn interval.")]
+    public float halveEverySeconds = 55f;
+    public float minInterval = 0.32f;
+
+    [Header("Falling Difficulty")]
+    public float fallRampSeconds = 120f;
+    [Range(1f, 3f)] public float maxFallMultiplier = 3f;
 
     [Header("Spawn Mix")]
-    [Range(0f, 1f)] public float healthyChance = 0.12f;
+    [Tooltip("Bonus chances at the starting pace; adjusted to stay rare as hazards speed up.")]
+    [Range(0f, 1f)] public float healthyChance = 0.04f;
 
     private Coroutine loop;
     private Camera gameplayCamera;
@@ -53,7 +59,6 @@ public class Spawner : MonoBehaviour
         yield return null;
         gameplayCamera = Camera.main;
         player = FindAnyObjectByType<PlayerMovement>();
-        float startTime = Time.time;
 
         while (player == null || !player.IsRoundOver)
         {
@@ -63,20 +68,32 @@ public class Spawner : MonoBehaviour
                 continue;
             }
 
-            SpawnEnemy();
-            float elapsed = Time.time - startTime;
-            float currentInterval = Mathf.Max(0.01f, startInterval) * Mathf.Pow(
-                0.5f, elapsed / Mathf.Max(0.01f, halveEverySeconds));
-            currentInterval = Mathf.Max(Mathf.Max(0.01f, minInterval), currentInterval);
-            yield return new WaitForSeconds(currentInterval);
+            // Scaled scene time freezes during pauses and is not reset by health recovery.
+            float elapsed = Time.timeSinceLevelLoad;
+            SpawnEnemy(elapsed);
+            yield return new WaitForSeconds(GetSpawnInterval(elapsed));
         }
 
         loop = null;
     }
 
-    private void SpawnEnemy()
+    public float GetSpawnInterval(float elapsed)
     {
-        GameObject prefabToSpawn = ChoosePrefab();
+        float fastest = Mathf.Max(0.05f, minInterval);
+        float starting = Mathf.Max(fastest, startInterval);
+        return fastest + (starting - fastest) * Mathf.Pow(
+            0.5f, Mathf.Max(0f, elapsed) / Mathf.Max(0.01f, halveEverySeconds));
+    }
+
+    public float GetFallMultiplier(float elapsed)
+    {
+        return Mathf.Lerp(1f, Mathf.Clamp(maxFallMultiplier, 1f, 3f),
+            1f - Mathf.Pow(0.5f, Mathf.Max(0f, elapsed) / Mathf.Max(0.01f, fallRampSeconds)));
+    }
+
+    private void SpawnEnemy(float elapsed)
+    {
+        GameObject prefabToSpawn = ChoosePrefab(elapsed);
         if (prefabToSpawn == null)
         {
             if (!warnedAboutMissingPrefabs)
@@ -133,15 +150,16 @@ public class Spawner : MonoBehaviour
             motion = spawned.AddComponent<FallingFoodMotion>();
         }
 
-        motion.Configure(1f + Time.timeSinceLevelLoad / 180f);
+        motion.Configure(GetFallMultiplier(elapsed));
     }
 
-    private GameObject ChoosePrefab()
+    private GameObject ChoosePrefab(float elapsed)
     {
-        // One roll gives each pickup its configured chance instead of reducing later pools' odds.
-        float heartWeight = HasPrefab(heartPickups) ? Mathf.Clamp01(heartChance) : 0f;
-        float coinWeight = HasPrefab(coinPickups) ? Mathf.Clamp01(coinChance) : 0f;
-        float healthyWeight = HasPrefab(healthyEnemies) ? Mathf.Clamp01(healthyChance) : 0f;
+        // Preserve bonuses per minute instead of flooding late-game runs with rewards.
+        float bonusScale = GetSpawnInterval(elapsed) / GetSpawnInterval(0f);
+        float heartWeight = HasPrefab(heartPickups) ? Mathf.Clamp01(heartChance) * bonusScale : 0f;
+        float coinWeight = HasPrefab(coinPickups) ? Mathf.Clamp01(coinChance) * bonusScale : 0f;
+        float healthyWeight = HasPrefab(healthyEnemies) ? Mathf.Clamp01(healthyChance) * bonusScale : 0f;
         float roll = Random.value * Mathf.Max(1f, heartWeight + coinWeight + healthyWeight);
         if (roll < heartWeight)
         {

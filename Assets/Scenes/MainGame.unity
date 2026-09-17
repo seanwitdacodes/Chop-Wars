@@ -2831,15 +2831,17 @@ MonoBehaviour:
   - {fileID: 1881412332994042305, guid: 654a0b209029043b3b6a11a73281339a, type: 3}
   heartPickups:
   - {fileID: 4896335157172152521, guid: 3961764504f024031899b5e37f587a72, type: 3}
-  heartChance: 0.035
+  heartChance: 0.012
   coinPickups:
   - {fileID: 6963025095289207306, guid: 9af73c1a19c96410aaac432d3ff3bb66, type: 3}
-  coinChance: 0.07
+  coinChance: 0.02
   spawnAreaSize: {x: 16, y: 1}
-  startInterval: 2.5
-  halveEverySeconds: 90
-  minInterval: 0.85
-  healthyChance: 0.12
+  startInterval: 1.6
+  halveEverySeconds: 55
+  minInterval: 0.32
+  fallRampSeconds: 120
+  maxFallMultiplier: 3
+  healthyChance: 0.04
 --- !u!1 &1170395557
 GameObject:
   m_ObjectHideFlags: 0
